@@ -1,0 +1,73 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+struct Student{
+char name[50];
+int rollno;
+float marks;
+char dept[50];
+struct Student* left;
+struct Student* right;
+};
+struct Student*createStudent(char name[],int rollno,float marks,char dept[]){
+	struct Student* newStudent=(struct Student*)malloc(sizeof(struct Student));
+	if(newStudent==NULL){
+		printf("Memory allocation failed\n");
+		exit(1);
+	}
+	strcpy(newStudent->name,name);
+	newStudent->rollno=rollno;
+	strcpy(newStudent->dept,dept);
+	newStudent->left=NULL;
+	newStudent->right=NULL;
+	return newStudent;
+}
+struct Student*insertStudent(struct Student*root,struct Student*newStudent){
+	if(root == NULL){
+		return newStudent;
+	}
+	if(newStudent->rollno<root->rollno){
+		root->left=insertStudent(root->left,newStudent);
+	}else if (newStudent->rollno>root->rollno){
+		root->right=insertStudent(root->right,newStudent);
+	}else{
+		printf("Duplicate roll number detected: %d\n",newStudent->rollno);
+		free(newStudent);
+	}
+	return root;
+	}
+void inorderTraversal(struct Student* root){
+	if(root!=NULL){	if(root!=NULL){
+		inorderTraversal(root->left);
+		printf("Name: %s\nRoll Number: %d\nMarks(out of 600): %2f\nDepartment:%s\n",root->name,root->rollno,root->marks,root->dept);
+		inorderTraversal(root->right);
+	}
+}
+int main(){
+	struct Student*root=NULL;
+	int numStudents;
+	printf("---------------------Student Management System-------------------\n");
+	printf("Enter the number of students: ");
+	scanf("%d",&numStudents);
+	getchar();
+	for(int i=0;i<numStudents;i++){
+		char name[50];
+		int rollno;
+		float marks;
+		char dept[50];
+		printf("\nEnter details for Student %d:\n",i+1);
+		printf("Name: ");		scanf("%s",name);
+		printf("Roll Number:");
+		scanf("%d",&rollno);
+		printf("Marks(out of 600): ");
+		scanf("%f",&marks);
+		printf("Department: ");
+		scanf("%s",dept);
+		getchar();
+		struct Student*newStudent=createStudent(name,rollno,marks,dept);
+		root=insertStudent(root,newStudent);
+	}
+	printf("\nList of all students which is sorted by roll no:\n");
+	inorderTraversal(root);
+	return 0;
+}
